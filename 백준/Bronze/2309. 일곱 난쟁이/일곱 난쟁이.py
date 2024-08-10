@@ -13,35 +13,23 @@ for i in range(N):
     arr.append(int(input()))
 
 # 탐색 -
+def make조합_중복없음(arr: list, cnt: int):
+    result = []
 
-def get순열_중복없음(storage_nums, k, picked_nums, search_idx):
-    collections = []  # 값 생성을 위해 클로저 정의
-
-    def recur(picked_nums, search_idx):
-        if search_idx >= len(storage_nums):
+    def inner(arr, start_idx, picked_arr):
+        if len(picked_arr) == cnt:
+            result.append(picked_arr)
             return
+        for i in range(start_idx, len(arr)):
+            inner(arr, i + 1, picked_arr[:] + [arr[i]])
 
-        if len(picked_nums) == k:  # 재귀 - 탈출
-            collections.append(picked_nums[:])  # 주의) 리스트 참조값
-            return
+    inner(arr, 0, [])
 
-        picked_num = storage_nums[search_idx]
-
-        if storage_nums[search_idx] not in picked_nums:
-            picked_nums.append(picked_num)
-            recur(picked_nums, 0)
-
-            # 재귀 - 복구
-            picked_nums.pop()
-
-        # 재귀 - 호출
-        recur(picked_nums, search_idx + 1)  # 그 다음부터 찾기
-
-    recur(picked_nums, search_idx)
-    return collections
+    return result
 
 
-collections = get순열_중복없음(arr, 7, [], 0)
+
+collections = make조합_중복없음(arr, 7)
 
 for case in collections:
     acc = sum(case)
