@@ -1,45 +1,68 @@
-# [참고 자료](https://hstory0208.tistory.com/entry/Python%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EB%B0%B1%EC%A4%80-9663%EB%B2%88-N-Queen)
-# TODO: 베껴서 다시 풀어야함
+"""
+[문제 이해]
+- (1D) y_pos_arr = []; y_pos_arr[x_pos] = y_pos # 퀸을 놓은 자리
+- valid 수식 찾기 필요
+- dfs, 백트래킹 중요!!
+"""
 
-INIT_VALUE = 0
 N = int(input())
-# map = [[False] * N for _ in range(N)]  # 주의) 같은 참조로 여러개 만들면 안됨!
-# (최적화) 2D > 1D
-# - y_pos_arr[x_pos] = y_pos; map[x_pos][y_pos] 에 퀸을 놓겠다.
-# - 한편으로는 모두 다른 숫자를 갖고 있어야겠네
-y_pos_arr = [INIT_VALUE] * N
+y_pos_arr = [-1] * N
 
 
-def checkValidPos(target_x_pos):
+정방향_cross = [True] * ((2 * N) - 1)  # i + j
+역방향_cross = [True] * ((2 * N) - 1)  # i - j + N - 1
 
-    # 대각선 탐색
-    for i in range(target_x_pos):
-        is_in_same_line = y_pos_arr[target_x_pos] == y_pos_arr[i]
-        is_in_same_cross = abs(y_pos_arr[target_x_pos] - y_pos_arr[i]) == abs(
-            target_x_pos - i
-        )
 
-        if is_in_same_line or is_in_same_cross:
-            return False
+def check_is_정방향_cross(x_pos, y_pos):
+    return 정방향_cross[x_pos + y_pos]
 
-    return True
+
+def check_is_역방향_cross(x_pos, y_pos):
+    return 역방향_cross[x_pos - y_pos + N - 1]
+
+
+def set_queen(x_pos, y_pos):
+    정방향_cross[x_pos + y_pos] = False
+    역방향_cross[x_pos - y_pos + N - 1] = False
+    y_pos_arr[x_pos] = y_pos
+
+
+def reset_queen(x_pos, y_pos):
+    정방향_cross[x_pos + y_pos] = True
+    역방향_cross[x_pos - y_pos + N - 1] = True
+    y_pos_arr[x_pos] = -1
+
+
+def check_valid_pos(x_pos, y_pos):
+    # 열 중복
+    if y_pos in y_pos_arr:
+        return False
+
+    # 대각선 중복
+    if check_is_정방향_cross(x_pos, y_pos) and check_is_역방향_cross(x_pos, y_pos):
+        return True
+
+    return False
 
 
 cnt = 0
 
 
-def travel(x_pos):  # (0 >> N) 현재 x_pos 고정해서 위치 찾는 중
-    global cnt
-    if x_pos == N:
-        cnt += 1  # 탈출 - 끝까지 도달 성공
+def dfs(x_pos):
+    # 주의) x_pos; depth 정의 필요! y_pos_arr 만으로 관리할 수 있다고 생각했음
+
+    global cnt, y_pos_arr
+
+    if x_pos == N:  # 탈출
+        cnt += 1
         return
 
     for y_pos in range(N):
-        y_pos_arr[x_pos] = y_pos
-        valid = checkValidPos(x_pos)
-        if valid:
-            travel(x_pos + 1)
+        if check_valid_pos(x_pos, y_pos):
+            set_queen(x_pos, y_pos)
+            dfs(x_pos + 1)
+            reset_queen(x_pos, y_pos)
 
 
-travel(0)
+dfs(0)
 print(cnt)
