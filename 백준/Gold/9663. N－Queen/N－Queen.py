@@ -9,44 +9,25 @@ N = int(input())
 y_pos_arr = [-1] * N
 
 
-정방향_cross = [True] * ((2 * N) - 1)  # i + j
-역방향_cross = [True] * ((2 * N) - 1)  # i - j + N - 1
-
-
-def check_is_정방향_cross(x_pos, y_pos):
-    return 정방향_cross[x_pos + y_pos]
-
-
-def check_is_역방향_cross(x_pos, y_pos):
-    return 역방향_cross[x_pos - y_pos + N - 1]
+used_cols = [True] * N
+정방향_cross = [True] * (N << 1)  # 2N-1
+역방향_cross = [True] * (N << 1)  # (최적화) 비트 연산자로 2배처리
 
 
 def set_queen(x_pos, y_pos):
+    y_pos_arr[x_pos] = y_pos
     정방향_cross[x_pos + y_pos] = False
     역방향_cross[x_pos - y_pos + N - 1] = False
-    y_pos_arr[x_pos] = y_pos
+    used_cols[y_pos] = False
 
 
 def reset_queen(x_pos, y_pos):
+    y_pos_arr[x_pos] = -1
     정방향_cross[x_pos + y_pos] = True
     역방향_cross[x_pos - y_pos + N - 1] = True
-    y_pos_arr[x_pos] = -1
-
-
-def check_valid_pos(x_pos, y_pos):
-    # 열 중복
-    if y_pos in y_pos_arr:
-        return False
-
-    # 대각선 중복
-    if check_is_정방향_cross(x_pos, y_pos) and check_is_역방향_cross(x_pos, y_pos):
-        return True
-
-    return False
-
+    used_cols[y_pos] = True
 
 cnt = 0
-
 
 def dfs(x_pos):
     # 주의) x_pos; depth 정의 필요! y_pos_arr 만으로 관리할 수 있다고 생각했음
@@ -58,10 +39,12 @@ def dfs(x_pos):
         return
 
     for y_pos in range(N):
-        if check_valid_pos(x_pos, y_pos):
-            set_queen(x_pos, y_pos)
-            dfs(x_pos + 1)
-            reset_queen(x_pos, y_pos)
+        if not (used_cols[y_pos] and 정방향_cross[x_pos + y_pos] and 역방향_cross[x_pos - y_pos + N - 1]):
+            continue
+            
+        set_queen(x_pos, y_pos)
+        dfs(x_pos + 1)
+        reset_queen(x_pos, y_pos)
 
 
 dfs(0)
