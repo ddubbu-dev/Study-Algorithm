@@ -1,88 +1,53 @@
 from typing import Any
 from enum import Enum
+from collections import deque
 
 
 class FixedQueue:
-    class Empty(Exception):
-        pass
-
-    class Full(Exception):
-        pass
-
     def __init__(self, capacity: int) -> None:
-        self.cnt = 0
-        self.front = 0
-        self.rear = 0
-        self.capacity = capacity
-        self.que = [None] * capacity
-
-    def __len__(self) -> int:
-        return self.cnt  # Q. abs(self.front - self.rear) 아닌가?
-
-    def is_empty(self) -> bool:
-        return self.cnt <= 0
-
-    def is_full(self) -> bool:
-        return self.cnt >= self.capacity
+        self.que = deque([], maxlen=capacity)
 
     def __contains__(self, value: Any) -> bool:
         return self.count(value) > 0
 
-    def enque(self, x: Any) -> None:
-        if self.is_full():
-            raise FixedQueue.Full
+    def get_size(self) -> int:
+        return len(self.que)
 
-        self.que[self.rear] = x
-        self.rear = (self.rear + 1) % self.capacity  # 원형 구조
-        self.cnt += 1
+    def is_empty(self) -> bool:
+        return self.get_size() <= 0
+
+    def is_full(self) -> bool:
+        return self.get_size() >= self.capacity
+
+    def enque(self, x: Any) -> None:
+        self.que.append(x)
 
     def deque(self) -> Any:
-        if self.is_empty():
-            raise FixedQueue.Empty
-
-        x = self.que[self.front]
-        self.front = (self.front + 1) % self.capacity
-        self.cnt -= 1
-
-        return x
+        return self.que.popleft()
 
     def peek(self) -> Any:
-        if self.is_empty():
-            raise FixedQueue.Empty
-        return self.que[self.front]
+        return self.que[0]
 
     def find(self, value: Any) -> Any:
-        for i in range(self.cnt):
-            idx = (i + self.front) % self.capacity
-            if self.que[idx] == value:
-                return idx
-        return -1
+        return self.que.index(value)
 
     def count(self, value: Any) -> bool:
-        result = 0
-
-        for i in range(self.cnt):
-            idx = (i + self.front) % self.capacity
-            if self.que[idx] == value:
-                result += 1
-
-        return result
+        return self.que.count(value)
 
     def clear(self) -> None:
-        # self.__init__(self.capacity)
-        self.cnt = self.front = self.rear = 0
+        self.que.clear()
 
     def print_from_front_to_rear(self):
         if self.is_empty():
             print("Empty!")
         else:
-            for idx in range(self.cnt):
-                print(self.que[(idx + self.front) % self.capacity], end=" ")
+            for idx in range(self.get_size()):
+                print(self.que[(idx)], end=" ")
             print()
 
 
-q = FixedQueue(64)
-
+capaicty = 64
+q = FixedQueue(capaicty)
 
 Menu = Enum("Menu", ["인큐", "디큐", "피크", "검색", "순회", "종료"])
 
@@ -99,7 +64,7 @@ def select_menu() -> Menu:
 
 
 while True:
-    print(f"현재 데이터 개수: {len(q)} / {q.capacity}")
+    print(f"현재 데이터 개수: {q.get_size()} / {capaicty}")
     menu = select_menu()
 
     if menu == Menu.인큐:
@@ -113,6 +78,12 @@ while True:
         try:
             x = q.deque()
             print(f"디큐한 데이터는 {x}입니다.")
+        except FixedQueue.Empty:
+            print("큐가 비어 있습니다.")
+    elif menu == Menu.피크:
+        try:
+            x = q.peek()
+            print(f"피크한 데이터는 {x}입니다.")
         except FixedQueue.Empty:
             print("큐가 비어 있습니다.")
 
