@@ -3,18 +3,6 @@
 
 프로그래머스의 경우, 푼 문제 목록에 대한 마이그레이션이 필요합니다.
 
-### 🚀 algorithm_practice
-| 문제번호 | 링크 |
-| ----- | ----- |
-|sort|[링크](./algorithm_practice/sort/shell_sort.py)|
-### 🚀 baekjoon_utils
-| 문제번호 | 링크 |
-| ----- | ----- |
-|read_file|[링크](./baekjoon_utils/read_file/output.txt)|
-### 🚀 data_structure
-| 문제번호 | 링크 |
-| ----- | ----- |
-|binary_tree|[링크](./data_structure/binary_tree/%EB%A6%AC%EC%8A%A4%ED%8A%B8%EB%A1%9C_%EA%B5%AC%ED%98%84_%EC%8B%A4%ED%8C%A8.py)|
 ## 📚 백준
 ### 🚀 Bronze
 | 문제번호 | 링크 |
