@@ -8,7 +8,7 @@ class FixedStack:
         self.capacity = capacity
 
     def __len__(self) -> int:
-        """dunder함수; len() 함수에 전달 가능"""
+        """더블언더스코어함수=dunder함수; len() 함수에 전달 가능"""
         return len(self.stk)
 
     def __contains__(self, value: Any) -> bool:
