@@ -40,6 +40,9 @@ def main():
         if directory not in directories:
             if directory in ["백준", "프로그래머스"]:
                 content += "## 📚 {}\n".format(directory)
+            elif directory in ["algorithm_practice", "baekjoon_utils", "data_structure", "utils"]:
+                # personal archive 예외처리
+                continue
             else:
                 content += "### 🚀 {}\n".format(directory)
                 content += "| 문제번호 | 링크 |\n"
