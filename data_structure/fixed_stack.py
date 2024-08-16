@@ -1,71 +1,49 @@
 from typing import Any
+from collections import deque
 
 
 class FixedStack:
-    class Empty(Exception):
-        pass
-
-    class Full(Exception):
-        pass
-
     def __init__(self, capacity: int) -> None:
-        self.stk = [None] * capacity
+        self.stk = deque([], capacity)
         self.capacity = capacity
-        self.ptr = 0  # 다음에 놓을 곳
 
     def __len__(self) -> int:
         """dunder함수; len() 함수에 전달 가능"""
-        return self.ptr
+        return len(self.stk)
 
     def __contains__(self, value: Any) -> bool:
         """dunder함수; 멤버 판단 연산자 in 적용 가능"""
         return self.count(value) > 0
 
     def is_empty(self) -> bool:
-        return self.ptr <= 0
+        return not self.stk
 
     def is_full(self) -> bool:
-        return self.ptr >= self.capacity
+        return self.__len__ == self.capacity
 
     def push(self, value: Any) -> None:
-        if self.is_full():
-            raise FixedStack.Full
-
-        self.stk[self.ptr] = value
-        self.ptr += 1
+        self.stk.append(value)
 
     def pop(self) -> Any:
-        if self.is_empty():
-            raise FixedStack.Empty
-        self.ptr -= 1
-        return self.stk[self.ptr]
+        return self.stk.pop()
 
     def peek(self) -> Any:
-        if self.is_empty():
-            raise FixedStack.Empty
-        return self.stk[self.ptr - 1]
+        return self.stk[-1]
 
     def clear(self) -> None:
-        self.ptr = 0
+        return self.stk.clear()
 
     def find(self, value: Any) -> Any:
-        for i in range(self.ptr - 1, -1, -1):
-            if self.stk[i] == value:
-                return i
-        return -1
+        try:
+            return self.stk.index(value)
+        except ValueError:
+            return -1
 
     def count(self, value: Any) -> int:
-        cnt = 0
-        for i in range(self.ptr):
-            if self.stk[i] == value:
-                cnt += 1
-        return cnt
+        return self.stk.count(value)
 
     def print_from_bottom_to_top(self) -> None:
-        if self.is_empty():
-            print("Empty!")
-        else:
-            print(self.stk[: self.ptr])
+        print(list(self.stk))
 
 
 from enum import Enum
@@ -125,10 +103,3 @@ while True:
 
     elif menu == Menu.종료:
         break
-
-
-arr = list(1, 2, 3)
-
-arr.append(1)
-
-arr.insert()
