@@ -1,5 +1,22 @@
-from collections import deque
+"""
+[고민되는 점]
+Q. visited가 불필요할까?
+- 현재 노드에서 costs 가 없데이트되지 않는다면, 더 가볼 필요 없으니 진행 안함.
+- 혹 업데이트 된다면, 그 다음 진행을 위해 queue.append(item)
 
+Q. costs= inf or 0 무엇으로 초기화 해야할까?
+- inf 가 맞음, 시작점을 0으로 세팅해주면 inf 비교 후 0 할당 불필요해짐
+
+[액션 정리]
+0. 출발점 큐에 넣기
+(아래는 while queue)
+1. leftpop
+2. 인접 노드 최소 비용 업데이트 (start_cost + edge_cost vs end_cost)
+3. 만약 비용 업데이트 한다면, queue.append(item)
+
+"""
+
+from collections import deque
 import sys
 readline = lambda: sys.stdin.readline().strip()
 # readline = input
@@ -28,9 +45,9 @@ def print_graph():
 # print("===== (끝) graph edge 모음 =====")
 
 costs = [float("inf")] * GRAPH_SIZE  # target_s ~ 각 index 까지의 비용
-# Q. visited 필요할까? 아니면 모든 노드를 돌아다닐까?????
 
 que = deque([target_s])
+costs[target_s] = 0
 
 
 def bfs():
@@ -43,24 +60,17 @@ def bfs():
             if end == target_s:  # 출발지는 제외
                 continue
 
-            # 아이디어1) 아니면 업데이트할 때 넣어줄까?
             prev_cost = costs[end]  # 현재까지의 target_s ~ end 비용
 
             start_to_end_cost = edge_info[1]
-            tmp = costs[start] if costs[start] != float("inf") else 0  # TODO 아리까리
+            tmp = costs[start]
             new_cost = tmp + start_to_end_cost
 
-            # print(f"edge_info={edge_info}, prev_cost={prev_cost}, new_cost={new_cost}")
-
-            if prev_cost <= new_cost:  # 의심) visited가 여기서 관리되지 않을까?
-                # TODO: 같을경우 제외해줌 - 다시 돌려보기
-                continue
-            else:
+            if costs[end] > new_cost:
                 costs[end] = new_cost
-                if not end in que:  # 아이디어2) que에 두번 들어가서?
+                if not end in que:
                     que.append(end)
 
 
 bfs()
-
 print(costs[target_e])
